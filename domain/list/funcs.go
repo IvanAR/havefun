@@ -1,20 +1,39 @@
 package list
 
-//func Map[T interface{}, O interface{}](func(T) O) []T {
-//
-//}
-//
-//func List[T interface{}, O interface{}](func(T) O) []T {
-//
-//}
+type FunList[T any] []*T
 
-func Filter[T interface{}](values []*T, f func(*T) bool) []T {
-	var filtered []T
-	for _, v := range values {
-		result := f(v)
+func (f FunList[T]) Filter(fun func(*T) bool) FunList[T] { // TODO make a benchmark with pointers vs empty value including mem consumption
+	filtered := make(FunList[T], len(f))
+	position := 0
+	for _, v := range f {
+		result := fun(v)
 		if result {
-			filtered = append(filtered, *v)
+			filtered[position] = v
+			position++
 		}
 	}
-	return filtered
+	return filtered[:position]
+}
+
+func (f FunList[T]) Map(fun func(*T) *T) FunList[T] {
+	mapped := make(FunList[T], len(f)) // TODO check performance on slicing slice
+	for i, v := range f {
+		result := fun(v)
+		mapped[i] = result
+	}
+	return mapped[:]
+}
+
+func (f FunList[T]) MapNonNil(fun func(*T) T) FunList[T] {
+	mapped := make(FunList[T], len(f)) // TODO check performance on slicing slice
+	position := 0
+	for _, v := range f {
+		if &v == nil {
+			continue
+		}
+		result := fun(v)
+		mapped[position] = &result
+		position++
+	}
+	return mapped[:position]
 }
