@@ -10,13 +10,13 @@ type Person struct {
 	age  int
 }
 
-func TestFilter(t *testing.T) {
+func TestFilterWithFoundValue(t *testing.T) {
 	slice := FunList[Person]{{
-		name: "Raisa",
+		name: "Galadriel",
 		age:  30,
 	},
 		{
-			name: "Ivan",
+			name: "Frodo",
 			age:  32,
 		},
 	}
@@ -30,13 +30,60 @@ func TestFilter(t *testing.T) {
 	assert.Len(t, result, 1)
 }
 
-func TestMap(t *testing.T) {
+func TestFilterWithNOTFoundValue(t *testing.T) {
 	slice := FunList[Person]{{
-		name: "Raisa",
+		name: "Galadriel",
 		age:  30,
 	},
 		{
-			name: "Ivan",
+			name: "Frodo",
+			age:  32,
+		},
+	}
+	result := slice.Filter(func(p *Person) bool {
+		if p.age == 40 {
+			return true
+		}
+		return false
+	})
+
+	assert.Len(t, result, 0)
+}
+
+func TestFilterWithWithMoreThanOneFoundValue(t *testing.T) {
+	slice := FunList[Person]{{
+		name: "Galadriel",
+		age:  30,
+	},
+		{
+			name: "Gandalf",
+			age:  32,
+		},
+		{
+			name: "Frodo",
+			age:  32,
+		},
+	}
+	result := slice.Filter(func(p *Person) bool {
+		if p.age == 32 {
+			return true
+		}
+		return false
+	})
+
+	assert.Len(t, result, 2)
+	for _, p := range result {
+		assert.Equal(t, 32, p.age)
+	}
+}
+
+func TestMap(t *testing.T) {
+	slice := FunList[Person]{{
+		name: "Galadriel",
+		age:  30,
+	},
+		{
+			name: "Frodo",
 			age:  32,
 		},
 	}
@@ -55,11 +102,11 @@ func TestMap(t *testing.T) {
 
 func TestFilterChainMap(t *testing.T) {
 	slice := FunList[Person]{{
-		name: "Raisa",
+		name: "Galadriel",
 		age:  30,
 	},
 		{
-			name: "Ivan",
+			name: "Frodo",
 			age:  32,
 		},
 	}
@@ -81,7 +128,7 @@ func TestFilterChainMap(t *testing.T) {
 
 func TestMapNonNilValues(t *testing.T) {
 	slice := FunList[Person]{{
-		name: "Raisa",
+		name: "Galadriel",
 		age:  30,
 	},
 		nil,
@@ -99,19 +146,19 @@ func TestMapNonNilValues(t *testing.T) {
 	assert.Equal(t, 20, result[0].age)
 }
 
-func TestAnyFunMustReturnFirstAsserion(t *testing.T) {
+func TestAnyFunMustReturnFirstAssertion(t *testing.T) {
 	slice := FunList[Person]{{
-		name: "Raisa",
+		name: "Galadriel",
 		age:  30,
 	},
 		nil,
 		{
-			name: "Ivan",
+			name: "Frodo",
 			age:  32,
 		},
 	}
 
-	result := slice.Any(func(p *Person) bool {
+	result := slice.Find(func(p *Person) bool {
 		if p != nil && p.age == 32 {
 			return true
 		}

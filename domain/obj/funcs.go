@@ -1,15 +1,15 @@
 package obj
 
-type Optional[T any] struct {
+type FunObj[T any] struct {
 	value *T
 }
 
-func NewOptional[T any](value *T) Optional[T] {
-	return Optional[T]{value}
+func NewFunObj[T any](value *T) FunObj[T] {
+	return FunObj[T]{value}
 }
 
 // GetOrDefault Unwrapping function
-func (s Optional[T]) GetOrDefault(fun func() T) T {
+func (s FunObj[T]) GetOrDefault(fun func() T) T {
 	if s.value == nil {
 		return fun()
 	} else {
@@ -18,7 +18,7 @@ func (s Optional[T]) GetOrDefault(fun func() T) T {
 }
 
 // GetOrNil Unwrapping function
-func (s Optional[T]) GetOrNil() *T {
+func (s FunObj[T]) GetOrNil() *T {
 	if s.value != nil {
 		return s.value
 	} else {
