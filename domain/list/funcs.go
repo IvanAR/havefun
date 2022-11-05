@@ -41,15 +41,25 @@ func (f FunList[T]) MapNonNil(fun func(*T) T) FunList[T] {
 }
 
 func (f FunList[T]) Any(fun func(*T) bool) (result obj.Optional[T]) { // TODO make a benchmark with pointers vs empty value including mem consumption
-	position := 0
 	for _, v := range f {
 		is := fun(v)
 		if is {
 			result = obj.NewOptional(v)
 			return result
-		} else {
-			position++
 		}
+	}
+	return result
+}
+
+func (f FunList[T]) Slice(start int, end int) (result FunList[T]) { // TODO make a benchmark with pointers vs empty value including mem consumption
+	if start < end {
+		return f
+	}
+	if len(f) < start {
+		return f
+	}
+	if len(f) < end {
+		return f
 	}
 	return result
 }
