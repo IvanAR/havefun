@@ -12,7 +12,7 @@ type Mage struct {
 }
 
 func TestGetOrDefaultReturningDefault(t *testing.T) {
-	var mage FunOptional[Mage]
+	var mage Optional[Mage]
 
 	result := mage.GetOrDefault(func() Mage {
 		return Mage{
@@ -25,8 +25,8 @@ func TestGetOrDefaultReturningDefault(t *testing.T) {
 }
 
 func TestGetOrDefaultReturningOriginalValue(t *testing.T) {
-	mage := FunOptional[Mage]{
-		value: Mage{
+	mage := Optional[Mage]{
+		value: &Mage{
 			kind: "Original Mage",
 			age:  1500,
 			name: "The One",
@@ -41,4 +41,11 @@ func TestGetOrDefaultReturningOriginalValue(t *testing.T) {
 		}
 	})
 	assert.Equal(t, "Original Mage", result.kind)
+}
+
+func TestGetOrNil(t *testing.T) {
+	mage := NewOptional[any](nil)
+
+	result := mage.GetOrNil()
+	assert.Nil(t, result)
 }

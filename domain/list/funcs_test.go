@@ -86,15 +86,37 @@ func TestMapNonNilValues(t *testing.T) {
 	},
 		nil,
 	}
-	result := slice.Map(func(p *Person) *Person {
+	result := slice.MapNonNil(func(p *Person) Person {
 		if p.age == 30 {
-			return &Person{
+			return Person{
 				name: "New person",
 				age:  20,
 			}
 		}
-		return p
+		return *p
 	})
-	assert.Len(t, result, 2)
+	assert.Len(t, result, 1)
 	assert.Equal(t, 20, result[0].age)
+}
+
+func TestAnyFunMustReturnFirstAsserion(t *testing.T) {
+	slice := FunList[Person]{{
+		name: "Raisa",
+		age:  30,
+	},
+		nil,
+		{
+			name: "Ivan",
+			age:  32,
+		},
+	}
+
+	result := slice.Any(func(p *Person) bool {
+		if p != nil && p.age == 32 {
+			return true
+		}
+		return false
+	}).GetOrDefault(func() Person { return Person{} })
+
+	assert.Equal(t, result.age, 32)
 }
